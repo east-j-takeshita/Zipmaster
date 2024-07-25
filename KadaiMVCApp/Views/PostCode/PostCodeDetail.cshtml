@@ -1,0 +1,97 @@
+﻿@model ZipViewModel
+
+@{
+    ViewData["Title"] = "郵便番号詳細";
+    ViewData["message"] = "まだ処理していません。";
+
+}
+
+<div class="text-left">
+    <h1 class="display-3">郵便番号詳細</h1>
+</div>
+
+<form method="Post" id="PostDetailForm" name="updateform" asp-controller="PostCode"asp-action="Update" >
+    @* 送信先のコントローラー名、送信先のアクション指定 *@
+    <div class="form-group">
+        <label for="id">ID</label>@* for属性とidの紐づけ *@
+        <input type="text" name="id" id="id" class="form-control" value=@Model.PostOrderID readonly>
+        <label for="groupcode">グループ番号</label>
+        <input type="text" name="groupcode" id="groupcode" class="form-control" value=@Model.GroupCode>
+        <label for="oldpostcode">(旧)郵便番号</label>
+        <input type="text" name="oldpostcode" id="oldpostcode" class="form-control" value=@Model.OldPostCode>
+        <label for="postcode">郵便番号</label>
+        <input type="text" name="postcode" id="postcode" class="form-control" value=@Model.PostCode>
+        <label for="prefecture_kana">県名カナ</label>
+        <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" value=@Model.Prefecture_Kana>
+        <label for="city_kana">市町村名カナ</label>
+        <input type="text" name="city_kana" id="city_kana" class="form-control" value=@Model.City_Kana>
+        <label for="shiptoaddress_kana">町域名カナ</label>
+        <input type="text" name="shiptoaddress_kana" id="shiptoaddress_kana" class="form-control" value=@Model.ShipToAddress_Kana>
+        <label for="prefecture">都道府県名</label>
+        <input type="text" name="prefecture" id="prefecture" class="form-control" value=@Model.Prefecture>
+        <label for="city">市区町村名</label>
+        <input type="text" name="city" id="city" class="form-control" value=@Model.City>
+        <label for="shiptoaddress">町域名</label>
+        <input type="text" name="shiptoaddress" id="shiptoaddress" class="form-control" value=@Model.ShipToAddress>
+        <label for="sameshiptoaddress">一町域が二以上の郵便番号で表される場合の表示（「1」は該当、「0」は該当せず）</label>
+        <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" value=@Model.SameShipToAddress>
+        <label for="subdistrictlevel">小字毎に番地が起番されている町域の表示　（※4）　（「1」は該当、「0」は該当せず）</label>
+        <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" value=@Model.SubDistrictLevel >
+        <label for="chomename">丁目を有する町域の場合の表示　（「1」は該当、「0」は該当せず）</label>
+        <input type="text" name="chomename" id="chomename" class="form-control" value=@Model.ChomeName>
+        <label for="multiplecitynumber">一つの郵便番号で二以上の町域を表す場合の表示　（※5）　（「1」は該当、「0」は該当せず）</label>
+        <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" value=@Model.MultiplecityNumber >
+        <label for="updatedate">更新の表示（※6）（「0」は変更なし、「1」は変更あり、「2」廃止（廃止データのみ使用））</label>
+        <input type="text" name="updatedate" id="updatedate" class="form-control" value=@Model.UpdateDate>
+        <label for="updatereason">変更理由　（「0」は変更なし、「1」市政・区政・町政・分区・政令指定都市施行、「2」住居表示の実施、「3」区画整理、「4」郵便区調整等、「5」訂正、「6」廃止（廃止データのみ使用））</label>
+        <input type="text" name="updatereason" id="updatereason" class="form-control" value=@Model.UpdateReason>
+    </div>
+    <input type="submit" class="btn btn-primary" value="更新" onclick="UpdateAlert(event)" />
+</form>
+<form asp-controller="PostCode" asp-action="Delete" id="PostDeleteForm"  method="post">
+    <input type="hidden" name="id" id="id" class="form-control" value=@Model.PostOrderID readonly />
+    <input type="submit" class="btn btn-primary" value="削除" onclick="DeleteAlert(event)" />
+</form>
+
+<script type="text/javascript">
+    function UpdateAlert(event) {
+        //なければ、削除ボタンがクリックされた時点でフォームがすぐに送信されてしまい、JavaScriptの確認ダイアログを表示する機会がない
+        event.preventDefault();
+        try {
+            document.getElementById("PostDetailForm").submit();
+            alert("更新しました。");
+        }
+        catch (e) 
+        {
+            alert(e);
+        }
+
+    }
+    function DeleteAlert(event) {
+        event.preventDefault();
+        var result = confirm("本当に削除しますか？");
+
+        if (result){            
+            document.getElementById("PostDeleteForm").submit();
+            alert("削除しました。");
+        }
+            
+        
+        else {
+            alert("削除をキャンセルしました。");
+        }
+    }
+    //     if (result) {
+    //         window.alert("削除しました。");
+    //     }
+    //     else {
+    //         event.preventDefault();
+    //         window.alert("キャンセルしました。");
+    //     }
+
+    // }
+    
+
+</script>
+
+
