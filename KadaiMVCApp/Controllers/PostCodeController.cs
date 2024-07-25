@@ -18,7 +18,7 @@ namespace KadaiMVCApp.Controllers
         public IActionResult Index()
         {
             ViewData["SearchMessage"] = "";
-            ViewData["Search"] = "検索したい項目を入力して検索してください";
+            ViewData["Search"] = "検索したいキーワードを入力して検索してください";
             return View(new ZipViewModel());
         }
         public IActionResult PostCodeDetail()
@@ -44,9 +44,12 @@ namespace KadaiMVCApp.Controllers
         }
 
         [HttpPost("PostCode/Index")]
-        public async Task<ActionResult<List<Zip>>> Index(string postcode)
+        public async Task<ActionResult<List<Zip>>> Index(Keyword keyword)
         {
-            ViewData["Postcode"]=postcode;
+            ViewData["Postcode"]=keyword.PostCode; 
+            ViewData["Prefecture"]=keyword.Prefecture; 
+            ViewData["City"]=keyword.City;
+            ViewData["ShipToAddress"] = keyword.ShipToAddress; 
 
             var zips = new List<Zip>();
             //if (postcode.Length != 7)//前方一致のためコメントアウト
@@ -57,7 +60,7 @@ namespace KadaiMVCApp.Controllers
             //}
 
             var zipRepository = new ZipRepository();
-            zips =await zipRepository.GetZipmaster(postcode);
+            zips =await zipRepository.GetZipmaster(keyword);
             // データが見つからなかった場合
             var zipsData= new ZipViewModel() { };
             if (zips.Count ==0)
@@ -109,7 +112,7 @@ namespace KadaiMVCApp.Controllers
         }
 
 
-        [HttpPost]////?は?id を省略可能、外せない。
+        [HttpPost("PostCode/Delete/{id?}")]////?は?id を省略可能、外せない。
         public async Task<IActionResult> Delete(int id)
         {
             var zipMasterRepository = new ZipRepository();

@@ -24,7 +24,7 @@ namespace KadaiMVCApp.Repository
 
 
 
-        public async Task<List<Zip>> GetZipmaster(string postcode)
+        public async Task<List<Zip>> GetZipmaster(Keyword keyword)
         {
             var zips = new List<Zip>();
 
@@ -38,10 +38,10 @@ namespace KadaiMVCApp.Repository
                 Console.WriteLine("接続成功");
                 using (var command = connection.CreateCommand())
                 {
-                    postcode = postcode+"%";
+                    keyword.PostCode = keyword.PostCode +"%";
                     String sql = "SELECT TOP(100) * FROM Zipmaster WHERE PostCode LIKE @postcode";
                     
-                    zips = connection.Query<Zip>(sql, new { postcode = postcode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
+                    zips = connection.Query<Zip>(sql, new { postcode = keyword.PostCode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
                     
 
                 }
