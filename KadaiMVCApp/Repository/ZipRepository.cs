@@ -43,7 +43,6 @@ namespace KadaiMVCApp.Repository
                     
                     zips = connection.Query<Zip>(sql, new { postcode = keyword.PostCode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
                     
-
                 }
 
             }
