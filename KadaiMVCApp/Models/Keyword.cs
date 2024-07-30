@@ -7,10 +7,8 @@ namespace KadaiMVCApp.Models
     [Serializable]
     public class Keyword
     {
-        public string PostCode { get; set; }
-        public string Prefecture { get; set; }
-        public string City { get; set; }
-        public string ShipToAddress { get; set; }
+        public string? PostCode { get; set; }
+        public string? KeyWord { get; set; }
 
     }
 }

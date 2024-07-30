@@ -24,7 +24,7 @@ namespace KadaiMVCApp.Repository
 
 
 
-        public async Task<List<Zip>> GetZipmaster(Keyword keyword)
+        public async Task<List<Zip>> GetZipmaster(string postcode,string keyword)
         {
             var zips = new List<Zip>();
 
@@ -38,21 +38,52 @@ namespace KadaiMVCApp.Repository
                 Console.WriteLine("接続成功");
                 using (var command = connection.CreateCommand())
                 {
-                    keyword.PostCode = keyword.PostCode +"%";
-                    String sql = "SELECT TOP(100) * FROM Zipmaster WHERE PostCode LIKE @postcode";
+                    postcode = postcode + "%";
+                    //var prefecture = "N'%" + keyword + "%'";
+                    //var city = "N'%" + keyword + "%'";
+                    //var shiptoaddress = "N'%" + keyword + "%'";
+
+                    var Keyword= String.Format("%{0}%", keyword);
                     
-                    zips = connection.Query<Zip>(sql, new { postcode = keyword.PostCode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
+
+                    // キーワード検索ありの場合
+                    if (IsKanji(keyword))
+                    {
+                        String sql = @"SELECT TOP(100) * FROM Zipmaster WHERE (Prefecture LIKE @prefecture or City LIKE @city or ShipToAddress LIKE @shiptoaddress) AND PostCode LIKE @postcode";
+                        zips = connection.Query<Zip>(sql,new { prefecture=Keyword, city = Keyword, shiptoaddress = Keyword, postcode = postcode }).Take(20).ToList();
+                    }
+
+                    // キーワード検索なしの場合
+                    else
+                    {
+
+                        String sql = "SELECT TOP(100) * FROM Zipmaster WHERE PostCode LIKE @postcode";
+                        zips = connection.Query<Zip>(sql, new { postcode =postcode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
+                    }
+                    
                     
                 }
 
             }
             return zips;
         }
+        private bool IsKanji(string str)
+        {
+            if (str == null) return false;
+
+            foreach (char c in str)
+            {
+                if (!(('\u4E00' <= c && c <= '\u9FCF') || ('\uF900' <= c && c <= '\uFAFF') || ('\u3400' <= c && c <= '\u4DBF'))) return false;
+            }
+
+            return true;
+        }
+
 
         //POstOrderID(主キーから該当する1件分のデータを取得する)
-        public async Task<ZipViewModel> PostOrderIDGetZip(int Id)
+        public async Task<Zip> PostOrderIDGetZip(int Id)
         {
-            var zip = new ZipViewModel();
+            var zip = new Zip();
 
             //Dapper
             Console.WriteLine("SQL Serverに接続しています...");
@@ -66,7 +97,7 @@ namespace KadaiMVCApp.Repository
                 {
                     String sql = "SELECT * FROM Zipmaster WHERE PostOrderID = @OrderPostID";
 
-                    zip = connection.QueryFirstOrDefault<ZipViewModel>(sql, new { OrderPostID = Id });//88行目の@postcodeに対して、変数を入れる
+                    zip = connection.QueryFirstOrDefault<Zip>(sql, new { OrderPostID = Id });//88行目の@postcodeに対して、変数を入れる
 
 
                 }
