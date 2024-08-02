@@ -13,9 +13,9 @@
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください"  value=@Model.Keyword.KeyPostCode />
+            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください" :value="keyWord.keyPostCode" />
             <label for="keyword">キーワード検索欄</label>
-            <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" value=@Model.Keyword.KeyWord />
+            <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" :value="keyWord.keyWord" />
 
         </div>
         <div class="form-group">
@@ -55,11 +55,13 @@
         setup() {
             const title = ref('検索Vue');
             const zipsData = ref(@Html.Raw(Json.Serialize(Model.ZipsData)));
+            const keyWord = ref(@Html.Raw(Json.Serialize(Model.Keyword)));
             const url=ref( 'PostCodeDetail/');
             
             return {
                 title,
                 zipsData,
+                keyWord,
                 url
             };
         }

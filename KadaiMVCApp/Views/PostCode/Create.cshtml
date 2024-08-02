@@ -58,7 +58,8 @@
             const createAlert = (event) => {
                 event.preventDefault();
                 try {
-                    document.getElementById("PostCreateForm").submit();
+                    const elem = document.getElementById("PostCreateForm");
+                    elem.submit();
                     alert("作成しました。");
                 } catch (e) {
                     alert(e);

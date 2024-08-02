@@ -20,27 +20,21 @@ namespace KadaiMVCApp.Controllers
         public IActionResult Index()
         {
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Message= new Message();
             zipViewModel.Keyword=new Keyword();
-            zipViewModel.Message.SearchMessage = "";
             return View(zipViewModel);
         }
         public IActionResult PostCodeDetail()
         {
-            ViewData["Message"] = "";
-
-            return View("index", new ZipViewModel());
-
+            return View("index");
         }
         public IActionResult Create()//これをまず書かないとビューとして見れない
         {
-            return View(new ZipViewModel());
+            return View();
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<List<Zip>>> Create(Zip zip)
         {
-
             var zipRepository = new ZipRepository();
             zipRepository.CreateZipmaster(zip);
             var zipViewModel = new ZipViewModel();
@@ -63,9 +57,7 @@ namespace KadaiMVCApp.Controllers
             var zipRepository = new ZipRepository();
             zips = await zipRepository.GetZipmaster(postcode,keyword);
             // データが見つからなかった場合
-            var zipViewModel = new ZipViewModel() { };
-            zipViewModel.Message = new Message();
-            zipViewModel.Message.SearchMessage = "";
+            var zipViewModel = new ZipViewModel();
             zipViewModel.Keyword=new Keyword();
             zipViewModel.Keyword.KeyPostCode = postcode;
             zipViewModel.Keyword.KeyWord= keyword;
@@ -82,23 +74,14 @@ namespace KadaiMVCApp.Controllers
         [HttpGet("PostCodeDetail/{ID?}")]
         public async Task<ActionResult<Zip>> PostCodeDetail(int ID)
         {
-            ViewData["PostOrderID"] = ID;
             var zip = new Zip();
             var zipRepository = new ZipRepository();
             zip = await zipRepository.PostOrderIDGetZip(ID);
 
             if (zip == null)
             {
-                ViewData["Message"] = "該当データはありません。";
-
                 return View("index", new ZipViewModel());
             }
-
-            //string[] zipData = new string[] { zip.PostOrderID.ToString(), zip.GroupCode, zip.OldPostCode,
-            //    zip.PostCode,zip.Prefecture_Kana, zip.City_Kana, zip.ShipToAddress_Kana,zip.Prefecture, zip.City,
-            //    zip.ShipToAddress,zip.SameShipToAddress.ToString(),zip.SubDistrictLevel.ToString(),
-            //    zip.ChomeName.ToString(),zip.MultiplecityNumber.ToString(),zip.UpdateDate.ToString(),
-            //    zip.UpdateReason.ToString()};
             else
             {
 
@@ -115,12 +98,7 @@ namespace KadaiMVCApp.Controllers
             zipMasterRepository.Update(id, zipmaster);//id入力をPostOrderIDに入れれば、良い
 
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Message = new Message();
-            zipViewModel.Message.Title = "検索";
-            zipViewModel.Message.SearchMessage = "";
             zipViewModel.Keyword = new Keyword();
-            zipViewModel.Message.SearchPostCode = "検索したい郵便番号を入力して検索してください";
-            zipViewModel.Message.TextAreaMessage = "検索したいキーワードを入力して検索してください";
             return View("index", zipViewModel);
 
         }
@@ -134,12 +112,7 @@ namespace KadaiMVCApp.Controllers
             zipMasterRepository.Delete(id);
 
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Message = new Message();
-            zipViewModel.Message.Title = "検索";
-            zipViewModel.Message.SearchMessage = "";
             zipViewModel.Keyword = new Keyword();
-            zipViewModel.Message.SearchPostCode = "検索したい郵便番号を入力して検索してください";
-            zipViewModel.Message.TextAreaMessage = "検索したいキーワードを入力して検索してください";
             return View("index", zipViewModel);
         }
 

@@ -9,7 +9,7 @@ namespace KadaiMVCApp.Models
     {
         public List<Zip> ZipsData { get; set; }
 
-        public Message Message { get; set; }
+        //public Message Message { get; set; }
         public Keyword Keyword { get; set; }
     }
 }
