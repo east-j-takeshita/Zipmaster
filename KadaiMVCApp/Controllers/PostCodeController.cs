@@ -21,11 +21,8 @@ namespace KadaiMVCApp.Controllers
         {
             var zipViewModel = new ZipViewModel();
             zipViewModel.Message= new Message();
-            zipViewModel.Message.Title = "検索";
-            zipViewModel.Message.SearchMessage = "";
             zipViewModel.Keyword=new Keyword();
-            zipViewModel.Message.SearchPostCode = "検索したい郵便番号を入力して検索してください";
-            zipViewModel.Message.TextAreaMessage = "検索したいキーワードを入力して検索してください";
+            zipViewModel.Message.SearchMessage = "";
             return View(zipViewModel);
         }
         public IActionResult PostCodeDetail()
@@ -47,12 +44,7 @@ namespace KadaiMVCApp.Controllers
             var zipRepository = new ZipRepository();
             zipRepository.CreateZipmaster(zip);
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Message = new Message();
-            zipViewModel.Message.Title = "検索";
-            zipViewModel.Message.SearchMessage = "";
             zipViewModel.Keyword = new Keyword();
-            zipViewModel.Message.SearchPostCode = "検索したい郵便番号を入力して検索してください";
-            zipViewModel.Message.TextAreaMessage = "検索したいキーワードを入力して検索してください";
             return View("index", zipViewModel);
         }
 
@@ -73,16 +65,13 @@ namespace KadaiMVCApp.Controllers
             // データが見つからなかった場合
             var zipViewModel = new ZipViewModel() { };
             zipViewModel.Message = new Message();
-            zipViewModel.Message.Title = "検索";
             zipViewModel.Message.SearchMessage = "";
             zipViewModel.Keyword=new Keyword();
-            zipViewModel.Keyword.PostCode = postcode;
+            zipViewModel.Keyword.KeyPostCode = postcode;
             zipViewModel.Keyword.KeyWord= keyword;
-            
-            zipViewModel.Message.TextAreaMessage = "検索したいキーワードを入力して検索してください";
+
             if (zips.Count == 0)
             {
-                zipViewModel.Message.SearchMessage= "該当データはありません。";
                 return View("Index", zipViewModel);
             }
             zipViewModel.ZipsData = zips;//zipsをZipViewModelのZipsDataに格納

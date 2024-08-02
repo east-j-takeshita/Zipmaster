@@ -5,23 +5,24 @@
 @{
     
 }
-<div class="text-left">
-    <h1 class="display-3">@Model.Message.Title</h1>
 
+
+<div id="index" class="text-left">
+    <h1 class="display-3">{{ title }}</h1>
     <form method="post" asp-controller="PostCode" asp-action="Index">
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" placeholder=@Model.Message.TextAreaMessage value=@Model.Keyword.PostCode />
+            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください"  value=@Model.Keyword.KeyPostCode />
             <label for="keyword">キーワード検索欄</label>
-            <input type="text" name="keyword" id="keyword" class="form-control" placeholder=@Model.Message.TextAreaMessage value =@Model.Keyword.KeyWord />
+            <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" value=@Model.Keyword.KeyWord />
 
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="送信" />
+            <input v-on:click="msg" type="submit" class="btn btn-primary" value="送信" />
         </div>
     </form>
-
+    <p v-if="zipsData===null">該当データはありません</p>
     <table class="table">
         <tr>
             <th>郵便番号</th>
@@ -31,26 +32,41 @@
             <th>詳細リンク</th>
 
         </tr>
-        @if (Model.ZipsData!=null)
-        {
 
-            @foreach (var zip in Model.ZipsData)
-            {
-                <tr>
-                    <td>@zip.PostCode</td>
-                    <td>@zip.Prefecture</td>
-                    <td>@zip.City</td>
-                    <td>@zip.ShipToAddress</td>
-                    <td><a href="@Url.Action("PostCodeDetail", new { ID= zip.PostOrderID })">詳細はこちら</a></td>
-                </tr>
-            }
-
-        }
-        else
-        {
-            @Model.Message.SearchMessage;
-        }
+        <tr v-for="zip in zipsData" :key="zip.id">
+            
+            <td>{{zip.postCode}}</td>
+            <td>{{zip.prefecture}}</td>
+            <td>{{zip.city}}</td>
+            <td>{{zip.shipToAddress}}</td>
+            <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
+        </tr>
 
     </table>
+
+    
 </div>
 <button type="submit" class="btn btn-primary" onclick="location.href ='PostCode/Create'" value="遷移" />新規追加
+
+
+<script>
+    const { createApp, ref } = Vue
+    createApp({
+        setup() {
+            const title = ref('検索Vue');
+            const zipsData = ref(@Html.Raw(Json.Serialize(Model.ZipsData)));
+            const url=ref( 'PostCodeDetail/');
+            
+            return {
+                title,
+                zipsData,
+                url
+            };
+        }
+
+
+    }).mount('#index');
+    
+    // アプリケーションを特定のDOM要素にマウント
+    
+</script>

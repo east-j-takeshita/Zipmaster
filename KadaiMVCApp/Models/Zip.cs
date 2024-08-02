@@ -8,7 +8,7 @@ namespace KadaiMVCApp.Models
     public class Zip
     {
         [Key]
-        [JsonIgnore]
+        
         public int PostOrderID { get; set; }//id
         public string GroupCode { get; set; }
         public string OldPostCode { get; set; }
