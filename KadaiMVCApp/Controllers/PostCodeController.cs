@@ -32,7 +32,7 @@ namespace KadaiMVCApp.Controllers
             return View();
         }
 
-        [HttpPost("Create")]
+        [HttpPost("/Create")]
         public async Task<ActionResult<List<Zip>>> Create(Zip zip)
         {
             var zipRepository = new ZipRepository();
@@ -42,8 +42,8 @@ namespace KadaiMVCApp.Controllers
             return View("index", zipViewModel);
         }
 
-        [HttpPost("Index")]
-        public async Task<ActionResult<List<Zip>>> Index(string postcode, string keyword)
+        [HttpPost("/Index/{postcode?}/{keyword?}")]
+        public async Task<ActionResult<ZipViewModel>> Index(string postcode, string keyword)
         {
 
 
@@ -61,14 +61,13 @@ namespace KadaiMVCApp.Controllers
             zipViewModel.Keyword=new Keyword();
             zipViewModel.Keyword.KeyPostCode = postcode;
             zipViewModel.Keyword.KeyWord= keyword;
-
+            
             if (zips.Count == 0)
             {
-                return View("Index", zipViewModel);
+                return zipViewModel;
             }
             zipViewModel.ZipsData = zips;//zipsをZipViewModelのZipsDataに格納
-
-            return View(zipViewModel);
+            return zipViewModel;
         }
 
         [HttpGet("PostCodeDetail/{ID?}")]

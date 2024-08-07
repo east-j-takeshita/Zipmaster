@@ -26,6 +26,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=PostCode}/{action=Index}/{id?}");
+    pattern: "{controller=PostCode}/{action=Index}");
 
 app.Run();
