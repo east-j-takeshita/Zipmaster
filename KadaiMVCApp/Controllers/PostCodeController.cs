@@ -42,7 +42,7 @@ namespace KadaiMVCApp.Controllers
             return View("index", zipViewModel);
         }
 
-        [HttpPost("/Index/{postcode?}/{keyword?}")]
+        [HttpPost("Index/{postcode?}/{keyword?}")]
         public async Task<ActionResult<ZipViewModel>> Index(string postcode, string keyword)
         {
 

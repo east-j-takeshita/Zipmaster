@@ -13,9 +13,9 @@
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください" :value="keyWord.keyPostCode" />@* v-model="searchData.keyPostCode" *@
+            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください"v-model="searchPostCode" />@* v-model="searchData.keyPostCode" *@
             <label for="keyword">キーワード検索欄</label>
-            <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" :value="keyWord.keyWord" />
+            <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" v-model="searchKeyWord" />
 
         </div>
         <div class="form-group">
@@ -55,15 +55,10 @@
     createApp({
         setup() {
             const title = ref('検索Vue');
-
-            const zips = ref([]);
-
-            const keyWord = ref(@Html.Raw(Json.Serialize(Model.Keyword)));
-            const searchData = ref({
-                postCode: '1510053',
-                keyWord:'東京',
-
-            });
+           
+            const searchPostCode = ref();
+            const searchKeyWord = ref();
+   
             const url = ref('PostCodeDetail/');
             const zipsData = ref();
             const getZipData = async() => {
@@ -75,34 +70,13 @@
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     };
-
-                    console.log(searchData.value.postCode);
-                   
                     
-
-
-                    console.log(keyWord);
-                    console.log(keyWord.value);
-                    console.log(keyWord.value.keyPostCode);
-                    
-                    console.log(keyWord.keyPostCode);
-                    
-
-                    const response = await axios.post('/index');//APIと合わせる
-                        // .then(res =>
-                        //     this.data = res.searchData.value.postCode
-                            
-                        // )
-                        // .catch(err => 
-                        //     console.log(err.statusText)
-                        // );
+                    const response = await axios.post('Index/'+searchPostCode.value+'/'+searchKeyWord.value);//APIと合わせる
 
                     //APIに合わせる
                     console.log(response);
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
                 }
-                    
-
                 catch (err) {
                     console.error(err);
                 }
@@ -113,8 +87,8 @@
 
             return {
                 title,
-                keyWord,
-                searchData,
+                searchPostCode,
+                searchKeyWord,
                 url,
                 getZipData,
                 zipsData

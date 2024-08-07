@@ -73,7 +73,7 @@ namespace KadaiMVCApp.Repository
 
             foreach (char c in str)
             {
-                if (!(('\u4E00' <= c && c <= '\u9FCF') || ('\uF900' <= c && c <= '\uFAFF') || ('\u3400' <= c && c <= '\u4DBF'))) return false;
+                if (!(('\u4E00' <= c && c <= '\u9FCF') || ('\uF900' <= c && c <= '\uFAFF') ||('\u3005'==c) ||('\u3400' <= c && c <= '\u4DBF'))) return false;
             }
 
             return true;
