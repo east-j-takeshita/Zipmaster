@@ -2,6 +2,7 @@
   "name": "kadaimvcapp",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -15,13 +16,16 @@
     "@babel/preset-env": "^7.14.7",
     "@vue/compiler-sfc": "^3.3.0",
     "babel-loader": "^8.2.2",
-    "vue": "^3.4.35",
+    "vue": "^3.4.37",
     "vue-loader": "^17.3.1",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
     "axios": "^1.7.3",
-    "jquery": "^3.7.1"
+    "jquery": "^3.7.1",
+    "vue-paginate": "^3.6.0",
+    "vuejs-paginate": "^2.1.0",
+    "vuejs-paginate-next": "^1.0.2"
   }
 }

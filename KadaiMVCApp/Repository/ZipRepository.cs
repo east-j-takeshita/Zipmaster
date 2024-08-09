@@ -58,7 +58,7 @@ namespace KadaiMVCApp.Repository
                     {
 
                         String sql = "SELECT TOP(100) * FROM Zipmaster WHERE PostCode LIKE @postcode";
-                        zips = connection.Query<Zip>(sql, new { postcode =postcode }).Take(20).ToList();//88行目の@postcodeに対して、変数を入れる
+                        zips = connection.Query<Zip>(sql, new { postcode =postcode }).Take(100).ToList();//88行目の@postcodeに対して、変数を入れる
                     }
                     
                     

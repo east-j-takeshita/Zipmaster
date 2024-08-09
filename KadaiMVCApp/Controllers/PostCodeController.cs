@@ -21,7 +21,7 @@ namespace KadaiMVCApp.Controllers
         {
             var zipViewModel = new ZipViewModel();
             zipViewModel.Keyword=new Keyword();
-            return View(zipViewModel);
+            return View("index",zipViewModel);
         }
         public IActionResult PostCodeDetail()
         {
@@ -90,7 +90,7 @@ namespace KadaiMVCApp.Controllers
         }
 
         [HttpPost("Update/{id?}")]//
-        public async Task<ActionResult> Update(int id, Zip zipmaster)
+        public async Task<IActionResult> Update(int id, Zip zipmaster)
         {
             var zipMasterRepository = new ZipRepository();
             zipmaster.PostOrderID = id;
@@ -98,7 +98,7 @@ namespace KadaiMVCApp.Controllers
 
             var zipViewModel = new ZipViewModel();
             zipViewModel.Keyword = new Keyword();
-            return View("index", zipViewModel);
+            return Index();
 
         }
 

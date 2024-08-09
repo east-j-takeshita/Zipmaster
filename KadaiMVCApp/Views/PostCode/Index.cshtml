@@ -5,7 +5,7 @@
 @{
     
 }
-
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.css">
 
 <div id="index" class="text-left">
     <h1 class="display-3">{{ title }}</h1>
@@ -23,7 +23,7 @@
         </div>
     </form>
     <p v-if="zipsData===null">該当データはありません</p>
-    <table class="table">
+    @* <table class="table">
         <tr>
             <th>郵便番号</th>
             <th>都道府県名</th>
@@ -41,49 +41,118 @@
             <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
         </tr>
 
-    </table>
+    </table> *@
+    <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移" />新規追加</button>
+
+    <div v-if ="zipsData!==null">
+        <table class="table">
+            <tr v-for="zip in getLists" :key="zip.id">
+                <td>{{zip.postCode}}</td>
+                <td>{{zip.prefecture}}</td>
+                <td>{{zip.city}}</td>
+                <td>{{zip.shipToAddress}}</td>
+                <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
+            </tr>
+        </table>
+        
+    </div>
+
+    <div id="pagination">
+        <ul class="pagination">
+            <li v-on:click=" getToFirstPage" class="{{isStartPage ? 'disabled' : ''}}"><a>&laquo</a></li>
+            <li v-on:click=" getToPreviousPage" class="{{isStartPage ? 'disabled' : ''}}"><a>&lt;</a></li>
+            <li v-on:click="" class="{{page == $index ? 'active': ''}}"><a>{{currentPage}}</a></li>
+            <li v-on:click=" getToNextPage" class="{{isEndPage ? 'disabled' : ''}}"><a>&gt</a></li>
+            <li v-on:click=" getToLastPage" class="{{isEndPage ? 'disabled' : ''}}"><a>&raquo</a></li>
+        </ul>
+    </div>
+        
+
 
     
-    <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移" />新規追加
+
 </div>
 
-<script src="https://unpkg.com/vue@next"></script>
+<!-- or use the specify version -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/vuejs-paginate-next@latest/dist/vuejs-paginate-next.umd.js"></script>
+@* //<script src="~/js/app.mjs" type = 'module' defer></script> *@
+
+
+<script type="module">
+    import { createApp, ref,computed, defineComponent } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
     
-    const { createApp, ref,computed ,watchEffect} = Vue;
-    createApp({
+
+    const app = createApp({
         setup() {
             const title = ref('検索Vue');
-           
+            const url = ref('PostCodeDetail/');
+
             const searchPostCode = ref();
             const searchKeyWord = ref();
-   
-            const url = ref('PostCodeDetail/');
-            const zipsData = ref();
-            const getZipData = async() => {
+            const zipsData = ref([]);
+
+            const getZipData = async () => {
                 try {
-                    
                     const config = {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     };
-                    
-                    const response = await axios.post('Index/'+searchPostCode.value+'/'+searchKeyWord.value);//APIと合わせる
 
-                    //APIに合わせる
-                    console.log(response);
+                    const response = await axios.post('Index/' + searchPostCode.value + '/' + searchKeyWord.value);//APIと合わせる
+
+                    //console.log(response);
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
+
+
                 }
                 catch (err) {
                     console.error(err);
                 }
             };
+
+            const tweets = ref([]);// 表示対象となるリストデータzipDatas,fetch何とかで取ってきている
+            const currentPage = ref(1);// 現在のページ
+            const parPage = ref(10);// 1ページに表示する件数
+
+
+
+            const getLists = computed(() => {
+                const current = currentPage.value * parPage.value;
+                const start = current - parPage.value;//10-10からスタート
+                return zipsData.value.slice(start, current);//0-10
+            });//そのページに合ったデータだけを表示 1ページ目ならtweetsの0〜9番目を、2ページ目なら10〜19番目のデータを表示
+
+            const getPageCount = computed(() => {
+                return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;
+            });//総ページ
             
-            //watchEffect(() => { console.log(zipsData.value) });//valueつけたらちゃんと呼ばれる。
+            const getToFirstPage = () => {
+                currentPage.value = 1;
+            };
+
+            const getToPreviousPage = () => {
+                if (currentPage.value > 1) {
+                    currentPage.value -= 1;
+                }
+            };
+
+            const getToNextPage = () => {
+                if (currentPage.value < getPageCount.value) {
+                    currentPage.value += 1;
+                }
+            };
+
+            const getToLastPage = () => {
+                currentPage.value = getPageCount.value;
+            };
             
+
+            getZipData();
+
 
             return {
                 title,
@@ -91,13 +160,53 @@
                 searchKeyWord,
                 url,
                 getZipData,
-                zipsData
-                
-            };
-        }
-        
+                zipsData,
 
-    }).mount('#index');
-    // アプリケーションを特定のDOM要素にマウント
+                currentPage,
+                parPage,
+                getLists,
+                getPageCount,
+                getToFirstPage,
+                getToPreviousPage,
+                getToNextPage,
+                getToLastPage           
+
+            };
+
+        }
+
+
+
+    });
+
+    app.mount('#index');
+    
+
+    //app.component('paginate', Paginate);
+    
     
 </script>
+
+<style>
+    .pagination {
+        display: flex;
+        list-style: none;
+        width: 300px;
+        height: 100px;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-item {
+        margin: 0 5px;
+    }   
+
+    .page-link {
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+</style>
+
