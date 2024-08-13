@@ -50,15 +50,15 @@ namespace KadaiMVCApp.Repository
                     if (IsKanji(keyword))
                     {
                         String sql = @"SELECT TOP(100) * FROM Zipmaster WHERE (Prefecture LIKE @prefecture or City LIKE @city or ShipToAddress LIKE @shiptoaddress) AND PostCode LIKE @postcode";
-                        zips = connection.Query<Zip>(sql,new { prefecture=Keyword, city = Keyword, shiptoaddress = Keyword, postcode = postcode }).Take(20).ToList();
+                        zips = connection.Query<Zip>(sql,new { prefecture=Keyword, city = Keyword, shiptoaddress = Keyword, postcode = postcode }).Take(1000).ToList();
                     }
 
                     // キーワード検索なしの場合
                     else
                     {
 
-                        String sql = "SELECT TOP(100) * FROM Zipmaster WHERE PostCode LIKE @postcode";
-                        zips = connection.Query<Zip>(sql, new { postcode =postcode }).Take(100).ToList();//88行目の@postcodeに対して、変数を入れる
+                        String sql = "SELECT TOP(1000) * FROM Zipmaster WHERE PostCode LIKE @postcode";
+                        zips = connection.Query<Zip>(sql, new { postcode =postcode }).Take(1000).ToList();//88行目の@postcodeに対して、変数を入れる
                     }
                     
                     

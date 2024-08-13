@@ -22,6 +22,7 @@
             <button v-on:click="getZipData" type="button" class="btn btn-primary">送信</button>
         </div>
     </form>
+
     <p v-if="zipsData===null">該当データはありません</p>
     @* <table class="table">
         <tr>
@@ -42,11 +43,15 @@
         </tr>
 
     </table> *@
-    <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移" />新規追加</button>
-
+    <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移">新規追加</button>
+    <ul>
+        <li><button v-on:click="sort(1)">郵便番号昇順</button></li>
+        <li><button v-on:click="sort(2)">郵便番号降順</button></li>
+    </ul>
+     
     <div v-if ="zipsData!==null">
         <table class="table">
-            <tr v-for="zip in getLists" :key="zip.id">
+            <tr v-for="zip in getLists" :key="zip.postOrderID">
                 <td>{{zip.postCode}}</td>
                 <td>{{zip.prefecture}}</td>
                 <td>{{zip.city}}</td>
@@ -66,10 +71,10 @@
             <li v-on:click=" getToLastPage" class="{{isEndPage ? 'disabled' : ''}}"><a>&raquo</a></li>
         </ul>
     </div>
-        
 
 
-    
+
+
 
 </div>
 
@@ -114,21 +119,21 @@
                 }
             };
 
-            const tweets = ref([]);// 表示対象となるリストデータzipDatas,fetch何とかで取ってきている
             const currentPage = ref(1);// 現在のページ
             const parPage = ref(10);// 1ページに表示する件数
-
+            const sortOrder = ref(0);// ソートの基準を設定する変数
+            
 
 
             const getLists = computed(() => {
-                const current = currentPage.value * parPage.value;
-                const start = current - parPage.value;//10-10からスタート
-                return zipsData.value.slice(start, current);//0-10
+                const current = currentPage.value * parPage.value;//現在の表示の最後
+                const start = current - parPage.value;//0からスタート
+                return sortedItems.value.slice(start, current);//0-10zipsDataからsortedItemsに変更
             });//そのページに合ったデータだけを表示 1ページ目ならtweetsの0〜9番目を、2ページ目なら10〜19番目のデータを表示
 
             const getPageCount = computed(() => {
-                return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;
-            });//総ページ
+                return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;//10/3の時4
+            });//総ページの計算を最初だけ
             
             const getToFirstPage = () => {
                 currentPage.value = 1;
@@ -147,11 +152,31 @@
             };
 
             const getToLastPage = () => {
-                currentPage.value = getPageCount.value;
+                currentPage.value = getPageCount.value;//getPageCount最後の値を入れる
             };
             
+            // ソート関数
+            function sort(index) {
+                sortOrder.value = index;//0は何もなし、1は昇順、2は降順
+                console.log(sortOrder.value);//反応している
+            }
 
-            getZipData();
+            const sortedItems = computed(() => {
+                // データの深いコピーを作成
+                
+                console.log('きた');
+                // ソートの順序を決定
+                switch (sortOrder.value) {
+                    case 1: // 昇順
+                        return zipsData.value.sort((a, b) => parseInt(a.postCode) - parseInt(b.postCode));
+                    case 2: // 降順
+                        return zipsData.value.sort((a, b) => parseInt(b.postCode) - parseInt(a.postCode));
+                    default: // ソートしない
+                        return zipsData.value;
+                }
+            });
+
+
 
 
             return {
@@ -163,13 +188,16 @@
                 zipsData,
 
                 currentPage,
-                parPage,
+                //parPage,表示側で使うやつだけ返せばよい
                 getLists,
-                getPageCount,
+                //getPageCount,
                 getToFirstPage,
                 getToPreviousPage,
                 getToNextPage,
-                getToLastPage           
+                getToLastPage,//ページング
+                
+                sort,
+                sortedItems//ソート
 
             };
 
