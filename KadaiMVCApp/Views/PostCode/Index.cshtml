@@ -3,17 +3,18 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    
+
 }
 <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.css">
 
 <div id="index" class="text-left">
     <h1 class="display-3">{{ title }}</h1>
-    <form >@* asp-controller="PostCode" asp-action="Index" *@
+    <form>
+        @* asp-controller="PostCode" asp-action="Index" *@
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください"v-model="searchPostCode" />@* v-model="searchData.keyPostCode" *@
+            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="検索したい郵便番号を入力して検索してください" v-model="searchPostCode" />@* v-model="searchData.keyPostCode" *@
             <label for="keyword">キーワード検索欄</label>
             <input type="text" name="keyword" id="keyword" class="form-control" placeholder="検索したいキーワードを入力して検索してください" v-model="searchKeyWord" />
 
@@ -25,32 +26,48 @@
 
     <p v-if="zipsData===null">該当データはありません</p>
     @* <table class="table">
-        <tr>
-            <th>郵便番号</th>
-            <th>都道府県名</th>
-            <th>市区町村名</th>
-            <th>町域名</th>
-            <th>詳細リンク</th>
+    <tr>
+    <th>郵便番号</th>
+    <th>都道府県名</th>
+    <th>市区町村名</th>
+    <th>町域名</th>
+    <th>詳細リンク</th>
 
-        </tr>
+    </tr>
 
-        <tr v-for="zip in zipsData" :key="zip.id">
-            <td>{{zip.postCode}}</td>
-            <td>{{zip.prefecture}}</td>
-            <td>{{zip.city}}</td>
-            <td>{{zip.shipToAddress}}</td>
-            <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
-        </tr>
+    <tr v-for="zip in zipsData" :key="zip.id">
+    <td>{{zip.postCode}}</td>
+    <td>{{zip.prefecture}}</td>
+    <td>{{zip.city}}</td>
+    <td>{{zip.shipToAddress}}</td>
+    <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
+    </tr>
 
     </table> *@
     <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移">新規追加</button>
-    <ul>
-        <li><button v-on:click="sort(1)">郵便番号昇順</button></li>
-        <li><button v-on:click="sort(2)">郵便番号降順</button></li>
-    </ul>
-     
-    <div v-if ="zipsData!==null">
+    @* <ul>
+    <li><button v-on:click="sort(1)">郵便番号昇順</button></li>
+    <li><button v-on:click="sort(2)">郵便番号降順</button></li>
+    </ul> *@
+
+    <div v-if="zipsData!==null">
         <table class="table">
+            <tr>
+                <th class="postcode-header">
+                    郵便番号
+                    <div class="sort-button">
+                        <span v-on:click="sort(1)">▲</span>
+                        <span v-on:click="sort(2)">▼</span>
+                    </div>
+                </th>
+
+
+                <th>都道府県名</th>
+                <th>市区町村名</th>
+                <th>町域名</th>
+                <th>詳細リンク</th>
+
+            </tr>
             <tr v-for="zip in getLists" :key="zip.postOrderID">
                 <td>{{zip.postCode}}</td>
                 <td>{{zip.prefecture}}</td>
@@ -59,18 +76,20 @@
                 <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
             </tr>
         </table>
-        
+
+        <ul class="pagination">
+            <li v-if="hasPreviousPage" v-on:click=" getToFirstPage"><a>&laquo</a></li>
+            <li v-if="hasPreviousPage" v-on:click=" getToPreviousPage" ><a>&lt;</a></li>
+            <li v-if="hasPreviousPage" v-on:click="getToPreviousPage" ><a>{{previousPage}}</a></li>
+            <li v-on:click="" class=""><a style="background-color:skyblue">{{currentPage}}</a></li>
+            <li v-if="hasNextPage" v-on:click="getToNextPage" ><a>{{nextPage}}</a></li>
+            <li v-if="hasNextPage" v-on:click=" getToNextPage"><a>&gt</a></li>
+            <li v-if="hasNextPage" v-on:click=" getToLastPage" ><a>&raquo</a></li>
+        </ul>
+
     </div>
 
-    <div id="pagination">
-        <ul class="pagination">
-            <li v-on:click=" getToFirstPage" class="{{isStartPage ? 'disabled' : ''}}"><a>&laquo</a></li>
-            <li v-on:click=" getToPreviousPage" class="{{isStartPage ? 'disabled' : ''}}"><a>&lt;</a></li>
-            <li v-on:click="" class="{{page == $index ? 'active': ''}}"><a>{{currentPage}}</a></li>
-            <li v-on:click=" getToNextPage" class="{{isEndPage ? 'disabled' : ''}}"><a>&gt</a></li>
-            <li v-on:click=" getToLastPage" class="{{isEndPage ? 'disabled' : ''}}"><a>&raquo</a></li>
-        </ul>
-    </div>
+
 
 
 
@@ -86,8 +105,8 @@
 
 
 <script type="module">
-    import { createApp, ref,computed, defineComponent } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
-    
+    import { createApp, ref, computed} from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
 
     const app = createApp({
         setup() {
@@ -96,8 +115,10 @@
 
             const searchPostCode = ref();
             const searchKeyWord = ref();
-            const zipsData = ref([]);
+            const zipsData = ref(null);
 
+
+            // データ取得
             const getZipData = async () => {
                 try {
                     const config = {
@@ -119,10 +140,14 @@
                 }
             };
 
+
+
+            // ページング
+            const previousPage = ref(0);//前のページ数
             const currentPage = ref(1);// 現在のページ
+            const nextPage = ref(2);//次のページ数
             const parPage = ref(10);// 1ページに表示する件数
             const sortOrder = ref(0);// ソートの基準を設定する変数
-            
 
 
             const getLists = computed(() => {
@@ -134,27 +159,44 @@
             const getPageCount = computed(() => {
                 return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;//10/3の時4
             });//総ページの計算を最初だけ
-            
+
+
+
             const getToFirstPage = () => {
+                previousPage.value = 0;
                 currentPage.value = 1;
+                nextPage.value = 2;
             };
 
             const getToPreviousPage = () => {
                 if (currentPage.value > 1) {
+                    previousPage.value -= 1;
                     currentPage.value -= 1;
+                    nextPage.value -= 1;
                 }
             };
 
             const getToNextPage = () => {
                 if (currentPage.value < getPageCount.value) {
+                    previousPage.value += 1;
                     currentPage.value += 1;
+                    nextPage.value += 1;
                 }
             };
 
             const getToLastPage = () => {
                 currentPage.value = getPageCount.value;//getPageCount最後の値を入れる
+                previousPage.value = currentPage.value - 1;
+                nextPage.value = currentPage.value + 1;
             };
-            
+
+            //前後のページがあるかどうか確認
+            const hasPreviousPage = computed(() => currentPage.value > 1);//前
+            const hasNextPage = computed(() => currentPage.value < getPageCount.value);//後ろ
+
+
+
+            // ソート
             // ソート関数
             function sort(index) {
                 sortOrder.value = index;//0は何もなし、1は昇順、2は降順
@@ -163,8 +205,6 @@
 
             const sortedItems = computed(() => {
                 // データの深いコピーを作成
-                
-                console.log('きた');
                 // ソートの順序を決定
                 switch (sortOrder.value) {
                     case 1: // 昇順
@@ -187,15 +227,24 @@
                 getZipData,
                 zipsData,
 
-                currentPage,
+
+
                 //parPage,表示側で使うやつだけ返せばよい
                 getLists,
                 //getPageCount,
+
+                previousPage,
+                currentPage,
+                nextPage,
+
+                hasPreviousPage,
+                hasNextPage,
+                //changePage,
                 getToFirstPage,
                 getToPreviousPage,
                 getToNextPage,
                 getToLastPage,//ページング
-                
+
                 sort,
                 sortedItems//ソート
 
@@ -208,32 +257,66 @@
     });
 
     app.mount('#index');
-    
+
 
     //app.component('paginate', Paginate);
-    
-    
+
+
 </script>
 
 <style>
+    .display-3{
+        font-size:30px;
+        margin:0px;
+    }
+    .table {
+        margin-top: 5px;
+    }
+
     .pagination {
         display: flex;
         list-style: none;
-        width: 300px;
-        height: 100px;
         padding: 0;
+        margin:0;
+        margin:0;
         list-style: none;
-        display: flex;
         justify-content: center;
+        align-items: center;
     }
+
+    .pagination > li > a{
+        background-color: transparent;
+    }
+
 
     .page-item {
         margin: 0 5px;
-    }   
+    }
 
     .page-link {
         margin: 0 5px;
         cursor: pointer;
+    }
+
+    .table > tbody > tr {
+        border-top: 1px solid #ddd;
+    }
+
+    .table > tbody > tr > th {
+        vertical-align: middle;
+        border: none;
+    }
+
+    .postcode-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .sort-button {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
     }
 
 </style>
