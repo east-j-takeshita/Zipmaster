@@ -10,19 +10,19 @@
     <h1>{{title}}</h1>
 
 
-    <form method="Post" id="PostCreateForm" name="updateform" asp-controller="PostCode" asp-action="Create">
+    <form method="Post" id="postCreateForm" name="updateform" asp-controller="PostCode" asp-action="Create">
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
             <label for="id">ID</label>@* for属性とidの紐づけ *@
             <input type="text" name="id" id="id" class="form-control" readonly>
             <label for="groupcode">グループ番号</label>
-            <input type="text" name="groupcode" id="groupcode" class="form-control" />
+            <input type="text" name="groupcode" id="groupcode" class="form-control" required />
             <label for="oldpostcode">(旧)郵便番号</label>
-            <input type="text" name="oldpostcode" id="oldpostcode" class="form-control" />
+            <input type="text" name="oldpostcode" id="oldpostcode" class="form-control" required />
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" />
+            <input type="text" name="postcode" id="postcode" class="form-control" required />
             <label for="prefecture_kana">県名カナ</label>
-            <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" />
+            <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" required />
             <label for="city_kana">市町村名カナ</label>
             <input type="text" name="city_kana" id="city_kana" class="form-control" />
             <label for="shiptoaddress_kana">町域名カナ</label>
@@ -56,17 +56,30 @@
         setup() {
             const title = ref('新規作成');
 
-            const createAlert = (event) => {
+            function createAlert(event){
                 event.preventDefault();
                 try {
-                    const elem = document.getElementById("PostCreateForm");
-                    elem.submit();
-                    alert("作成しました。");
-                } catch (e) {
+                    const form = document.getElementById('postCreateForm');
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        if (form.checkValidity()) {
+                            // バリデーションが成功した場合
+                            // アラートを表示する
+                            alert('Validation passed. Submitting the form...');
+
+                            // フォームの送信を行う
+                            // フォームの実際の送信処理（例えば、API呼び出し）をここで実装
+                            
+                            alert("作成しました。");
+                        }
+                    };
+                    //const elem = document.getElementById("PostCreateForm");
+                } 
+                catch (e) {
                     alert(e);
                 }
             };
-
+            document.getElementById('postCreateForm').addEventListener('submit', createAlert);
 
             return {
                 title,
