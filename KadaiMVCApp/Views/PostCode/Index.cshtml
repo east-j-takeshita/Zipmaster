@@ -50,7 +50,7 @@
     <li><button v-on:click="sort(2)">郵便番号降順</button></li>
     </ul> *@
 
-    <div v-if="zipsData!==null">
+    <div v-if="zipsData!=0">
         <table class="table">
             <tr>
                 <th class="postcode-header">
@@ -91,6 +91,19 @@
             <li v-if="hasThreePage&&hasNextPage" v-on:click=" getToLastPage"><a>&raquo</a></li>
         </ul>
 
+        
+        <paginate       :force-page="currentPage"
+                        :page-count="getPageCount"
+                        :page-range="3"
+                        :margin-pages="1"
+                        :click-handler="handlePageChange"                        
+                        :prev-text="'<'"
+                        :next-text="'>'"
+                        :first-last-button="true"
+                        :first-button-text="'<<'"
+                        :last-button-text="'>>'">
+        </paginate>
+
     </div>
 
 
@@ -105,21 +118,25 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuejs-paginate-next@latest/dist/vuejs-paginate-next.umd.js"></script>
+
 @* //<script src="~/js/app.mjs" type = 'module' defer></script> *@
 
 
 <script type="module">
-    import { createApp, ref, computed} from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
-
-
+    //import { createApp, ref, computed} from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+    const { createApp, ref, computed } = Vue;
     const app = createApp({
+        components: {
+            paginate: VuejsPaginateNext,
+        },
         setup() {
+
             const title = ref('検索Vue');
             const url = ref('PostCodeDetail/');
 
             const searchPostCode = ref();
             const searchKeyWord = ref();
-            const zipsData = ref(null);
+            const zipsData = ref(0);
 
 
             // データ取得
@@ -134,7 +151,7 @@
 
                     const response = await axios.post('Index/' + searchPostCode.value + '/' + searchKeyWord.value);//APIと合わせる
 
-                    //console.log(response);
+                    console.log(response);
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
                     getToFirstPage();
                     sortOrder.value = 0;
@@ -228,10 +245,25 @@
                         return zipsData.value;
                 }
             });
+            
 
+            
 
+            
+            const handlePageChange = (page) => {
+                currentPage.value = page;
+            };
+
+            
 
             return {
+                            
+                
+                handlePageChange,
+
+
+
+
                 title,
                 searchPostCode,
                 searchKeyWord,
