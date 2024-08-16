@@ -53,8 +53,8 @@
                 <th class="postcode-header">
                     郵便番号
                     <div class="sort-button">
-                        <span v-if="sortOrder==0||sortOrder==2" v-on:click="sort(1)">▲</span>
-                        <span v-if="sortOrder==0||sortOrder==1" v-on:click="sort(2)">▼</span>
+                        <span v-if="sortOrder==2" v-on:click="sort(1)">▲</span>
+                        <span v-else v-on:click="sort(2)">▼</span>
                     </div>
                 </th>
 
@@ -104,11 +104,6 @@
     </div>
 
 
-
-
-
-
-
 </div>
 
 <!-- or use the specify version -->
@@ -151,7 +146,7 @@
                     
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
                     getToFirstPage();
-                    sortOrder.value = 0;
+                    sortOrder.value = 1;
                 }
                 catch (err) {
                     console.error(err);
@@ -171,13 +166,14 @@
 
 
             const getLists = computed(() => {
-                
                 const current = currentPage.value * parPage.value;//現在の表示の最後
                 const start = current - parPage.value;//0からスタート
+                
                 return sortedItems.value.slice(start, current);//0-10zipsDataからsortedItemsに変更
             });//そのページに合ったデータだけを表示 1ページ目ならtweetsの0〜9番目を、2ページ目なら10〜19番目のデータを表示
 
             const getPageCount = computed(() => {
+                sortOrder.value = 1;
                 return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;//10/3の時4
             });//総ページの計算を最初だけ
 
@@ -309,7 +305,10 @@
 
 </script>
 
+
+
 <style>
+
     .display-3{
         font-size:30px;
         margin:0px;
