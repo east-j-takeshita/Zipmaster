@@ -92,12 +92,14 @@ namespace KadaiMVCApp.Controllers
         [HttpPost("Update/{id?}")]//
         public async Task<IActionResult> Update(int id, Zip zipmaster)
         {
+            Console.WriteLine(zipmaster);
             var zipMasterRepository = new ZipRepository();
             zipmaster.PostOrderID = id;
             zipMasterRepository.Update(id, zipmaster);//id入力をPostOrderIDに入れれば、良い
 
             var zipViewModel = new ZipViewModel();
             zipViewModel.Keyword = new Keyword();
+            
             return Index();
 
         }

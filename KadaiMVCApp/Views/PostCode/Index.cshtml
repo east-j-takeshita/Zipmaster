@@ -45,12 +45,9 @@
 
     </table> *@
     <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移">新規追加</button>
-    @* <ul>
-    <li><button v-on:click="sort(1)">郵便番号昇順</button></li>
-    <li><button v-on:click="sort(2)">郵便番号降順</button></li>
-    </ul> *@
 
-    <div v-if="zipsData!=0">
+
+    <div v-if="zipsData!=null">
         <table class="table">
             <tr>
                 <th class="postcode-header">
@@ -136,7 +133,7 @@
 
             const searchPostCode = ref();
             const searchKeyWord = ref();
-            const zipsData = ref(0);
+            const zipsData = ref();
 
 
             // データ取得
@@ -151,7 +148,7 @@
 
                     const response = await axios.post('Index/' + searchPostCode.value + '/' + searchKeyWord.value);//APIと合わせる
 
-                    console.log(response);
+                    
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
                     getToFirstPage();
                     sortOrder.value = 0;
@@ -230,7 +227,7 @@
             // ソート関数
             function sort(index) {
                 sortOrder.value = index;//0は何もなし、1は昇順、2は降順
-                console.log(sortOrder.value);//反応している
+                
             }
 
             const sortedItems = computed(() => {

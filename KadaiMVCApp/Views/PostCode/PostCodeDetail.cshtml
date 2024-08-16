@@ -1,53 +1,53 @@
 ﻿@model Zip
 
 @{
-    
+
 }
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<div id="postcodedetail"class="text-left">
+<div id="postcodedetail" class="text-left">
     <h1 class="display-3">{{title}}</h1>
-    
-    <form method="Post" id="PostDetailForm" name="updateform" asp-controller="PostCode"asp-action="Update" >
+
+    <form method="Post" id="postDetailForm" name="updateform" asp-controller="PostCode" asp-action="Update">
         @* 送信先のコントローラー名、送信先のアクション指定 *@
-        <div  class="form-group">
+        <div class="form-group">
             <label for="id">ID</label>@* for属性とidの紐づけ *@
             <input type="text" name="id" class="form-control" v-model="zip.postOrderID" readonly>
             <label for="groupcode">グループ番号</label>
-            <input type="text" name="groupcode" id="groupcode" class="form-control" v-model="zip.groupCode">
+            <input type="text" name="groupcode" id="groupcode" class="form-control" v-model="zip.groupCode" required>
             <label for="oldpostcode">(旧)郵便番号</label>
-            <input type="text" name="oldpostcode" id="oldpostcode" class="form-control" v-model=zip.oldPostCode>
+            <input type="text" name="oldpostcode" id="oldpostcode" class="form-control" v-model=zip.oldPostCode required>
             <label for="postcode">郵便番号</label>
-            <input type="text" name="postcode" id="postcode" class="form-control" v-model=zip.postCode>
+            <input type="text" name="postcode" id="postcode" class="form-control" v-model=zip.postCode required>
             <label for="prefecture_kana">県名カナ</label>
-            <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" v-model=zip.prefecture_Kana>
+            <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" v-model=zip.prefecture_Kana required>
             <label for="city_kana">市町村名カナ</label>
-            <input type="text" name="city_kana" id="city_kana" class="form-control" v-model=zip.city_Kana>
+            <input type="text" name="city_kana" id="city_kana" class="form-control" v-model=zip.city_Kana required>
             <label for="shiptoaddress_kana">町域名カナ</label>
-            <input type="text" name="shiptoaddress_kana" id="shiptoaddress_kana" class="form-control" v-model=zip.shipToAddress_Kana>
+            <input type="text" name="shiptoaddress_kana" id="shiptoaddress_kana" class="form-control" v-model=zip.shipToAddress_Kana required>
             <label for="prefecture">都道府県名</label>
-            <input type="text" name="prefecture" id="prefecture" class="form-control" v-model=zip.prefecture>
+            <input type="text" name="prefecture" id="prefecture" class="form-control" v-model=zip.prefecture required>
             <label for="city">市区町村名</label>
-            <input type="text" name="city" id="city" class="form-control" v-model=zip.city>
+            <input type="text" name="city" id="city" class="form-control" v-model=zip.city required>
             <label for="shiptoaddress">町域名</label>
-            <input type="text" name="shiptoaddress" id="shiptoaddress" class="form-control" v-model=zip.shipToAddress>
+            <input type="text" name="shiptoaddress" id="shiptoaddress" class="form-control" v-model=zip.shipToAddress required>
             <label for="sameshiptoaddress">一町域が二以上の郵便番号で表される場合の表示（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" v-model=zip.sameShipToAddress>
+            <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" v-model=zip.sameShipToAddress required>
             <label for="subdistrictlevel">小字毎に番地が起番されている町域の表示　（※4）　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" v-model=zip.subDistrictLevel>
+            <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" v-model=zip.subDistrictLevel required>
             <label for="chomename">丁目を有する町域の場合の表示　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="chomename" id="chomename" class="form-control" v-model=zip.chomeName>
+            <input type="text" name="chomename" id="chomename" class="form-control" v-model=zip.chomeName required>
             <label for="multiplecitynumber">一つの郵便番号で二以上の町域を表す場合の表示　（※5）　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" v-model=zip.multiplecityNumber>
+            <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" v-model=zip.multiplecityNumber required>
             <label for="updatedate">更新の表示（※6）（「0」は変更なし、「1」は変更あり、「2」廃止（廃止データのみ使用））</label>
-            <input type="text" name="updatedate" id="updatedate" class="form-control" v-model=zip.updateDate>
+            <input type="text" name="updatedate" id="updatedate" class="form-control" v-model=zip.updateDate required>
             <label for="updatereason">変更理由　（「0」は変更なし、「1」市政・区政・町政・分区・政令指定都市施行、「2」住居表示の実施、「3」区画整理、「4」郵便区調整等、「5」訂正、「6」廃止（廃止データのみ使用））</label>
-            <input type="text" name="updatereason" id="updatereason" class="form-control" v-model=zip.updateReason>
+            <input type="text" name="updatereason" id="updatereason" class="form-control" v-model=zip.updateReason required>
         </div>
-        <button type="submit" class="btn btn-primary" v-on:click="updateZipData" />更新
+        <button type="submit" class="btn btn-primary" v-on:click="updateZipData($event)" />更新
     </form>
-    <form asp-controller="PostCode" asp-action="Delete" id="PostDeleteForm"  method="post">
+    <form asp-controller="PostCode" asp-action="Delete" id="PostDeleteForm" method="post">
         <input type="hidden" name="id" id="id" class="form-control" :value=zip.postOrderID readonly />
-        <button type="button" class="btn btn-primary"  v-on:click="deleteAlert($event)" />削除
+        <button type="button" class="btn btn-primary" v-on:click="deleteAlert($event)" />削除
     </form>
 </div>
 
@@ -61,44 +61,37 @@
             const title = ref('郵便番号詳細');
             const zip = ref(@Html.Raw(Json.Serialize(Model)));
 
-            const msg = () => {
-                alert('msg');
-            };
-            
-            // const updateAlert = (event) => {
-            //     event.preventDefault();
-            //     try {
-            //         document.getElementById("PostDetailForm").submit();
-            //         alert("更新しました。");
-            //     } catch (e) {
-            //         alert(e);
-            //     }
-            // };
-            
-
-            const updateZipData=async()=>{
+            const updateZipData = (event) => {
                 try {
+                    event.preventDefault();
+                    const form = document.getElementById('postDetailForm');
+                    if (form&&form.checkValidity()) {
+                        // バリデーションが成功した場合
+                        
+                        console.log(form);
+                        form.submit();
+                        alert("更新しました。");
+                    }
+                    else {
+                        const invalidFields = form.querySelectorAll('.form-control');
 
-                    const config = {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    };
-
-                    const response = await axios.post('Update/' +zip.value.orderPostID);//APIと合わせる
-
-                    //APIに合わせる
-                    console.log(response);
-                    //取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
+                        invalidFields.forEach(function (field) {
+                            console.log(`Field ${field.name}`);
+                            console.log(`Reason:${field.validationMessage}`);
+                        })
+                        alert("更新できませんでした");
+                    }
+                    
+                    
                 }
-                catch (err) {
-                    console.error(err);
+                catch (e) {
+                    console.error(e);
                 }
 
             }
+
             const deleteAlert = (event) => {
-                event.preventDefault();
+               
                 var result = confirm("本当に削除しますか？");
 
                 if (result) {
@@ -108,19 +101,21 @@
                 else {
                     alert("削除をキャンセルしました。");
                 }
-            
+
             }
+            
+
+
 
             return {
                 title,
                 zip,
-                msg,
                 updateZipData,
                 deleteAlert
             };
         }
-            
-        
+
+
     }).mount('#postcodedetail');
 
 

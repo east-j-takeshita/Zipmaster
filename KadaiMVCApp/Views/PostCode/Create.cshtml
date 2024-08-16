@@ -2,7 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-   
+
 
 }
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -24,27 +24,27 @@
             <label for="prefecture_kana">県名カナ</label>
             <input type="text" name="prefecture_kana" id="prefecture_kana" class="form-control" required />
             <label for="city_kana">市町村名カナ</label>
-            <input type="text" name="city_kana" id="city_kana" class="form-control" />
+            <input type="text" name="city_kana" id="city_kana" class="form-control" required />
             <label for="shiptoaddress_kana">町域名カナ</label>
-            <input type="text" name="shiptoaddress_kana" id="shiptoaddress_kana" class="form-control" />
+            <input type="text" name="shiptoaddress_kana" id="shiptoaddress_kana" class="form-control" required />
             <label for="prefecture">都道府県名</label>
-            <input type="text" name="prefecture" id="prefecture" class="form-control" />
+            <input type="text" name="prefecture" id="prefecture" class="form-control" required />
             <label for="city">市区町村名</label>
-            <input type="text" name="city" id="city" class="form-control" />
+            <input type="text" name="city" id="city" class="form-control" required />
             <label for="shiptoaddress">町域名</label>
-            <input type="text" name="shiptoaddress" id="shiptoaddress" class="form-control" />
+            <input type="text" name="shiptoaddress" id="shiptoaddress" class="form-control" required />
             <label for="sameshiptoaddress">一町域が二以上の郵便番号で表される場合の表示（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" />
+            <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" required />
             <label for="subdistrictlevel">小字毎に番地が起番されている町域の表示　（※4）　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" />
+            <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" required />
             <label for="chomename">丁目を有する町域の場合の表示　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="chomename" id="chomename" class="form-control" />
+            <input type="text" name="chomename" id="chomename" class="form-control" required />
             <label for="multiplecitynumber">一つの郵便番号で二以上の町域を表す場合の表示　（※5）　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" />
+            <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" required />
             <label for="updatedate">更新の表示（※6）（「0」は変更なし、「1」は変更あり、「2」廃止（廃止データのみ使用））</label>
-            <input type="text" name="updatedate" id="updatedatee" class="form-control" />
+            <input type="text" name="updatedate" id="updatedatee" class="form-control" required />
             <label for="updatereason">変更理由　（「0」は変更なし、「1」市政・区政・町政・分区・政令指定都市施行、「2」住居表示の実施、「3」区画整理、「4」郵便区調整等、「5」訂正、「6」廃止（廃止データのみ使用））</label>
-            <input type="text" name="updatereason" id="updatereason" class="form-control" />
+            <input type="text" name="updatereason" id="updatereason" class="form-control" required />
         </div>
         <input type="submit" class="btn btn-primary" value="追加" v-on:click="createAlert($event)" />
     </form>
@@ -56,30 +56,34 @@
         setup() {
             const title = ref('新規作成');
 
-            function createAlert(event){
+            const createAlert = (event) => {
                 event.preventDefault();
+
                 try {
                     const form = document.getElementById('postCreateForm');
-                    form.addEventListener('submit', function (event) {
-                        event.preventDefault();
-                        if (form.checkValidity()) {
-                            // バリデーションが成功した場合
-                            // アラートを表示する
-                            alert('Validation passed. Submitting the form...');
 
-                            // フォームの送信を行う
-                            // フォームの実際の送信処理（例えば、API呼び出し）をここで実装
-                            
-                            alert("作成しました。");
-                        }
-                    };
-                    //const elem = document.getElementById("PostCreateForm");
-                } 
+                    if (form && form.checkValidity()) {
+                        // バリデーションが成功した場合
+                        // フォームの送信を行う
+                        // フォームの実際の送信処理（例えば、API呼び出し）をここで実装
+                        document.getElementById('postCreateForm').submit();
+                        alert("作成しました。");
+                    }
+                    else {
+                        const invalidFields = form.querySelectorAll('.form-control');
+
+                        invalidFields.forEach(function (field) {
+                            console.log(`Field ${field.name}`);
+                            console.log(`Reason:${field.validationMessage}`);
+                        })
+                        alert("作成できませんでした");
+                    }
+
+                }
                 catch (e) {
                     alert(e);
                 }
             };
-            document.getElementById('postCreateForm').addEventListener('submit', createAlert);
 
             return {
                 title,
