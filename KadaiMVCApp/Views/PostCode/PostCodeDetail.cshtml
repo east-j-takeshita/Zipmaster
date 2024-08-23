@@ -10,8 +10,8 @@
     <form method="Post" id="postDetailForm" name="updateform" asp-controller="PostCode" asp-action="Update">
         @* 送信先のコントローラー名、送信先のアクション指定 *@
         <div class="form-group">
-            <label for="id">ID</label>@* for属性とidの紐づけ *@
-            <input type="text" name="id" class="form-control" v-model="zip.postOrderID" readonly>
+            <label for="id">ID</label>@* for属性とidの紐づけ、nameはDapperを使用するうえで直接値を入れることができる*@
+            <input type="text" name="id" class="form-control" v-model="zip.postOrderId" readonly>
             <label for="groupcode">グループ番号</label>
             <input type="text" name="groupcode" id="groupcode" class="form-control" v-model="zip.groupCode" required>
             <label for="oldpostcode">(旧)郵便番号</label>
@@ -34,10 +34,10 @@
             <input type="text" name="sameshiptoaddress" id="sameshiptoaddress" class="form-control" v-model=zip.sameShipToAddress required>
             <label for="subdistrictlevel">小字毎に番地が起番されている町域の表示　（※4）　（「1」は該当、「0」は該当せず）</label>
             <input type="text" name="subdistrictlevel" id="subdistrictlevel" class="form-control" v-model=zip.subDistrictLevel required>
-            <label for="chomename">丁目を有する町域の場合の表示　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="chomename" id="chomename" class="form-control" v-model=zip.chomeName required>
-            <label for="multiplecitynumber">一つの郵便番号で二以上の町域を表す場合の表示　（※5）　（「1」は該当、「0」は該当せず）</label>
-            <input type="text" name="multiplecitynumber" id="multiplecitynumber" class="form-control" v-model=zip.multiplecityNumber required>
+            <label for="existcityblockname">丁目を有する町域の場合の表示　（「1」は該当、「0」は該当せず）</label>
+            <input type="text" name="existcityblockname" id="existcityblockname" class="form-control" v-model=zip.existCityBlockName required>
+            <label for="multiplicitynumber">一つの郵便番号で二以上の町域を表す場合の表示　（※5）　（「1」は該当、「0」は該当せず）</label>
+            <input type="text" name="multiplicitynumber" id="multiplicitynumber" class="form-control" v-model=zip.multiplicityNumber required>
             <label for="updatedate">更新の表示（※6）（「0」は変更なし、「1」は変更あり、「2」廃止（廃止データのみ使用））</label>
             <input type="text" name="updatedate" id="updatedate" class="form-control" v-model=zip.updateDate required>
             <label for="updatereason">変更理由　（「0」は変更なし、「1」市政・区政・町政・分区・政令指定都市施行、「2」住居表示の実施、「3」区画整理、「4」郵便区調整等、「5」訂正、「6」廃止（廃止データのみ使用））</label>
@@ -46,7 +46,7 @@
         <button type="submit" class="btn btn-primary" v-on:click="updateZipData($event)" />更新
     </form>
     <form asp-controller="PostCode" asp-action="Delete" id="PostDeleteForm" method="post">
-        <input type="hidden" name="id" id="id" class="form-control" :value=zip.postOrderID readonly />
+        <input type="hidden" name="id" id="id" class="form-control" :value=zip.postOrderId readonly />
         <button type="button" class="btn btn-primary" v-on:click="deleteAlert($event)" />削除
     </form>
 </div>

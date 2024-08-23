@@ -6,62 +6,88 @@ using System.Text.Json;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using KadaiMVCApp.Interfaces;
 
 namespace KadaiMVCApp.Controllers
 {
     public class PostCodeController : Controller
     {
-        private string _connectionstring;
-        
-        public PostCodeController()
+        //依存性注入の利用
+        private readonly IZipRepository _zipRepository;
+        public PostCodeController(IZipRepository zipRepository)
         {
-            _connectionstring = AppSettings.dbConnectString;//AppSettingsクラスから文字列'(静的クラスなので、そのまま取得)
+            _zipRepository = zipRepository;
         }
+
+
+        /// <summary>
+        /// Indexビューアクション
+        /// </summary>
+        /// <returns>値が空のIndexページ</returns>
         public IActionResult Index()
         {
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Keyword=new Keyword();
+            zipViewModel.InputtedKeyValue=new InputtedKeyValue();
             return View("index",zipViewModel);
         }
+
+        /// <summary>
+        /// データの詳細ビューアクション
+        /// </summary>
+        /// <returns></returns>
         public IActionResult PostCodeDetail()
         {
             return View("index");
         }
+
+        /// <summary>
+        /// 新規追加ビューアクション
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()//これをまず書かないとビューとして見れない
         {
             return View();
         }
 
-        [HttpPost("/Create")]
-        public async Task<ActionResult<List<Zip>>> Create(Zip zip)
+        /// <summary>
+        /// 新規追加アクション
+        /// </summary>
+        /// <param name="zip">新規追加するデータ</param>
+        /// <returns>値のないindexページ</returns>
+        [HttpPost("Create")]
+        public ActionResult<List<Zip>> Create(Zip zip)
         {
-            var zipRepository = new ZipRepository();
-            zipRepository.CreateZipmaster(zip);
+            _zipRepository.CreateZip(zip);
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Keyword = new Keyword();
+            zipViewModel.InputtedKeyValue = new InputtedKeyValue();
             return View("index", zipViewModel);
         }
 
-        [HttpPost("Index/{postcode?}/{keyword?}")]
-        public async Task<ActionResult<ZipViewModel>> Index(string postcode, string keyword)
+        /// <summary>
+        /// 検索結果indexページを表示するAPI
+        /// </summary>
+        /// <param name="postCode">検索のために入力された郵便番号</param>
+        /// <param name="keyWord">検索のために入力されたキーワード</param>
+        /// <returns>条件に合致した郵便番号検索一覧</returns>
+        [HttpPost("Index/{postCode?}/{keyWord?}")]
+        public async Task<ActionResult<ZipViewModel>> Index(string postCode, string keyWord)
         {
 
 
             //if (postcode.Length != 7)//前方一致のためコメントアウト
             //{
-            //    //ConterntResultはActionResultを継承しているから、使える
+            //    //ContentResultはActionResultを継承しているから、使える
             //    ViewData["Message"] = "郵便番号が7文字ではありません。";
             //    return View("Index");
             //}
             var zips = new List<Zip>();
-            var zipRepository = new ZipRepository();
-            zips = await zipRepository.GetZipmaster(postcode,keyword);
-            // データが見つからなかった場合
-            var zipViewModel = new ZipViewModel();
-            zipViewModel.Keyword=new Keyword();
-            zipViewModel.Keyword.KeyPostCode = postcode;
-            zipViewModel.Keyword.KeyWord= keyword;
+            zips = await _zipRepository.GetZips(postCode,keyWord);
             
+            var zipViewModel = new ZipViewModel();
+            zipViewModel.InputtedKeyValue = new InputtedKeyValue();
+            zipViewModel.InputtedKeyValue.InputtedPostCode = postCode;
+            zipViewModel.InputtedKeyValue.InputtedKeyWord= keyWord;
+            // データが見つからなかった場合
             if (zips.Count == 0)
             {
                 return zipViewModel;
@@ -70,56 +96,60 @@ namespace KadaiMVCApp.Controllers
             return zipViewModel;
         }
 
-        [HttpGet("PostCodeDetail/{ID?}")]
-        public async Task<ActionResult<Zip>> PostCodeDetail(int ID)
+
+        /// <summary>
+        /// zipの詳細ページを表示するAPI
+        /// </summary>
+        /// <param name="id">詳細ボタンが押されたid情報</param>
+        /// <returns>idのzipデータを保持したPostCodeDetailページ</returns>
+        [HttpGet("PostCodeDetail/{id?}")]
+        public async Task<ActionResult<Zip>> PostCodeDetail(int id)
         {
             var zip = new Zip();
-            var zipRepository = new ZipRepository();
-            zip = await zipRepository.PostOrderIDGetZip(ID);
-
+            zip = await _zipRepository.GetZipDetail(id);
+            //データが見つからなかった場合
             if (zip == null)
             {
                 return View("index", new ZipViewModel());
             }
+            //該当するデータが見つかった場合
             else
             {
-
                 return View(zip);
-
             }
         }
 
-        [HttpPost("Update/{id?}")]//
-        public async Task<IActionResult> Update(int id, Zip zipmaster)
-        {
-            Console.WriteLine(zipmaster);
-            var zipMasterRepository = new ZipRepository();
-            zipmaster.PostOrderID = id;
-            zipMasterRepository.Update(id, zipmaster);//id入力をPostOrderIDに入れれば、良い
 
+        /// <summary>
+        /// 更新ページAPI
+        /// </summary>
+        /// <param name="id">更新されるデータのid情報</param>
+        /// <param name="zipMaster">更新のためのデータ</param>
+        /// <returns></returns>
+        [HttpPost("Update/{id?}")]
+        public IActionResult Update(int id, Zip zipMaster)
+        {
+            zipMaster.PostOrderId = id;
+            _zipRepository.UpdateZip(id, zipMaster);//id入力をPostOrderIDに入れれば、良い
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Keyword = new Keyword();
-            
+            zipViewModel.InputtedKeyValue = new InputtedKeyValue();
             return Index();
 
         }
 
-
-        [HttpPost("Delete/{id?}")]////?は?id を省略可能、外せない。
-        public async Task<IActionResult> Delete(int id)
+        /// <summary>
+        /// 削除API
+        /// </summary>
+        /// <param name="id">削除されるデータのid情報</param>
+        /// <returns></returns>
+        [HttpPost("Delete/{id?}")]//?は?id を省略可能、外せない。
+        public IActionResult Delete(int id)
         {
-            var zipMasterRepository = new ZipRepository();
-
-            zipMasterRepository.Delete(id);
-
+            _zipRepository.DeleteZip(id);
             var zipViewModel = new ZipViewModel();
-            zipViewModel.Keyword = new Keyword();
+            zipViewModel.InputtedKeyValue = new InputtedKeyValue();
             return View("index", zipViewModel);
         }
 
-        private String ObjectToString(Zip zip)
-        {
-            return JsonSerializer.Serialize<Zip>(zip);
-        }
     }
 }

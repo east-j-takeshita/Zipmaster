@@ -25,25 +25,6 @@
     </form>
 
     <p v-if="zipsData===null">該当データはありません</p>
-    @* <table class="table">
-    <tr>
-    <th>郵便番号</th>
-    <th>都道府県名</th>
-    <th>市区町村名</th>
-    <th>町域名</th>
-    <th>詳細リンク</th>
-
-    </tr>
-
-    <tr v-for="zip in zipsData" :key="zip.id">
-    <td>{{zip.postCode}}</td>
-    <td>{{zip.prefecture}}</td>
-    <td>{{zip.city}}</td>
-    <td>{{zip.shipToAddress}}</td>
-    <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
-    </tr>
-
-    </table> *@
     <button type="submit" class="btn btn-primary" onclick="location.href='PostCode/Create'" value="遷移">新規追加</button>
 
 
@@ -70,7 +51,7 @@
                 <td>{{zip.prefecture}}</td>
                 <td>{{zip.city}}</td>
                 <td>{{zip.shipToAddress}}</td>
-                <td><a v-bind:href="url+zip.postOrderID">詳細はこちら</a></td>
+                <td><a v-bind:href="url+zip.postOrderId">詳細はこちら</a></td>
             </tr>
         </table>
 
@@ -131,7 +112,7 @@
             const zipsData = ref();
 
 
-            // データ取得
+            // データ取得するため
             const getZipData = async () => {
                 try {
                     const config = {
@@ -141,7 +122,7 @@
                         }
                     };
 
-                    const response = await axios.post('Index/' + searchPostCode.value + '/' + searchKeyWord.value);//APIと合わせる
+                    const response = await axios.post('Index/' + searchPostCode.value + '/' + searchKeyWord.value);//APIのpostと合わせる
 
                     
                     zipsData.value = response.data.zipsData;//取ってきたデータ格納。zipsDataにはいろいろ入っているので、valueをつける。
@@ -155,7 +136,7 @@
 
 
 
-            // ページング
+            // ページングのために用意する
             const subPreviousPage = ref(0);
             const previousPage = ref(0);//前のページ数
             const currentPage = ref(1);// 現在のページ
@@ -164,18 +145,19 @@
             const parPage = ref(10);// 1ページに表示する件数
             const sortOrder = ref(0);// ソートの基準を設定する変数
 
-
+            //そのページに合ったデータだけを表示 1ページ目ならtweetsの0〜9番目を、2ページ目なら10〜19番目のデータを表示
             const getLists = computed(() => {
-                const current = currentPage.value * parPage.value;//現在の表示の最後
-                const start = current - parPage.value;//0からスタート
+                const current = currentPage.value * parPage.value;
+                const start = current - parPage.value;
                 
-                return sortedItems.value.slice(start, current);//0-10zipsDataからsortedItemsに変更
-            });//そのページに合ったデータだけを表示 1ページ目ならtweetsの0〜9番目を、2ページ目なら10〜19番目のデータを表示
+                return sortedItems.value.slice(start, current);
+            });
 
+            //総ページの計算を最初だけ
             const getPageCount = computed(() => {
                 sortOrder.value = 1;
                 return zipsData.value ? Math.ceil(zipsData.value.length / parPage.value) : null;//10/3の時4
-            });//総ページの計算を最初だけ
+            });
 
 
 
@@ -184,33 +166,33 @@
                 currentPage.value = 1;
                 nextPage.value = 2;
    
-            };//開始ページに行く。呼び出せるときはHTMLでv-ifで指定
+            };
 
             const getToPreviousPage = () => {
                 previousPage.value -= 1;
                 currentPage.value -= 1;
                 nextPage.value -= 1;
-            };//1ページ前に行く。呼び出せるときはHTMLでv-ifで指定
+            };
 
             const getToNextPage = () => {
                 previousPage.value += 1;
                 currentPage.value += 1;
                 nextPage.value += 1;
                 subPreviousPage.value = currentPage.value - 2;
-            };//1ページ後に行く。呼び出せるときはHTMLでv-ifで指定
+            };
 
             const getToSubNextPage = () => {
                 previousPage.value += 2;
                 currentPage.value += 2;
                 nextPage.value += 2; 
-            };//2ページ後に行く。呼び出せるときはHTMLでv-ifで指定
+            };
 
             const getToLastPage = () => {
                 currentPage.value = getPageCount.value;//getPageCount最後の値を入れる
                 subPreviousPage.value = currentPage.value - 2;
                 previousPage.value = currentPage.value - 1;
-                nextPage.value = currentPage.value + 1;//使わないが代入
-            };//最終ページに行く。呼び出せるときはHTMLでv-ifで指定
+                nextPage.value = currentPage.value + 1;
+            }
 
 
             //前後のページがあるかどうか確認
@@ -249,13 +231,8 @@
 
             
 
-            return {
-                            
-                
+            return {            
                 handlePageChange,
-
-
-
 
                 title,
                 searchPostCode,
@@ -326,10 +303,13 @@
         list-style: none;
         justify-content: center;
         align-items: center;
+       
     }
 
     .pagination > li > a{
+
         background-color: transparent;
+            
     }
 
 

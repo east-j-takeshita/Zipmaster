@@ -7,9 +7,9 @@ namespace KadaiMVCApp.Models
     [Serializable]
     public class ZipViewModel
     {
-        public List<Zip> ZipsData { get; set; }
+        public List<Zip>? ZipsData { get; set; }
 
         //public Message Message { get; set; }
-        public Keyword Keyword { get; set; }
+        public InputtedKeyValue? InputtedKeyValue { get; set; }
     }
 }

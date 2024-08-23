@@ -9,7 +9,7 @@ namespace KadaiMVCApp.Models
     {
         [Key]
         
-        public int PostOrderID { get; set; }//id
+        public int PostOrderId { get; set; }//id
         public string GroupCode { get; set; }
         public string OldPostCode { get; set; }
         public string PostCode { get; set; }
@@ -21,8 +21,8 @@ namespace KadaiMVCApp.Models
         public string ShipToAddress { get; set; }
         public byte SameShipToAddress { get; set; }
         public byte SubDistrictLevel { get; set; }
-        public byte ChomeName { get; set; }
-        public byte MultiplecityNumber { get; set; }
+        public byte ExistCityBlockName { get; set; }
+        public byte MultiplicityNumber { get; set; }
         public byte UpdateDate { get; set; }
         public byte UpdateReason { get; set; }
 

@@ -1,3 +1,6 @@
+using KadaiMVCApp.Interfaces;
+using KadaiMVCApp.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +9,7 @@ IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();//•¶š—ñæ“¾H
 KadaiMVCApp.AppSettings.Initialize(config);//ŒÄ‚Ño‚µ
-
+builder.Services.AddScoped<IZipRepository, ZipRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

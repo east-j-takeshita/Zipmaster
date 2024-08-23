@@ -5,10 +5,10 @@ using System.Collections;
 namespace KadaiMVCApp.Models
 {
     [Serializable]
-    public class Keyword
+    public class InputtedKeyValue
     {
-        public string KeyPostCode { get; set; }
-        public string? KeyWord { get; set; }
+        public string? InputtedPostCode { get; set; }
+        public string? InputtedKeyWord { get; set; }
 
     }
 }
